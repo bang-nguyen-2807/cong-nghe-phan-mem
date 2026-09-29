@@ -1,0 +1,23 @@
+-- 1. Bảng Cuộc Trò Chuyện (Tạo khi khách mở khung chat từ ContactBar)
+CREATE TABLE conversations (
+    id SERIAL PRIMARY KEY,
+    user_name VARCHAR(100) NOT NULL,
+    user_email VARCHAR(150),                    -- Email (tùy chọn nếu khách điền)
+    user_phone VARCHAR(20),                     -- SĐT (tùy chọn)
+    status VARCHAR(20) DEFAULT 'open',          -- 'open' (đang chat), 'closed' (đã kết thúc)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Cập nhật mỗi khi có tin nhắn mới
+);
+
+-- 2. Bảng Tin Nhắn (Lưu các câu chat qua lại giữa Khách và Admin)
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    conversation_id INTEGER NOT NULL,
+    sender VARCHAR(10) NOT NULL,                -- 'user' (Khách gửi) hoặc 'admin' (Admin trả lời)
+    content TEXT NOT NULL,                      -- Nội dung tin nhắn
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (conversation_id)
+        REFERENCES conversations(id)
+        ON DELETE CASCADE                       -- Xóa cuộc trò chuyện sẽ tự xóa tin nhắn
+);
